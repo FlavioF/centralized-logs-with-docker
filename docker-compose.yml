@@ -29,3 +29,20 @@ services:
       - "rsyslog-agent"
     volumes_from:
       - rsyslog-agent
+  logstash-server:
+    restart: always
+    command: -f /logstash.conf
+    build: ./logstash-server
+    ports:
+      - "5044:5044"
+  elastic-filebeat:
+    restart: always
+    build: ./elastic-filebeat
+    links:
+      - logstash-server
+    depends_on:
+      - "logstash-server"
+      - "rsyslog-agent"
+    volumes_from:
+      # it should be done using a isolated volume, but it is enought for demo purposes
+      - rsyslog-agent
