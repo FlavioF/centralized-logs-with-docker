@@ -1,0 +1,7 @@
+filebeat.prospectors:
+- input_type: log
+  paths:
+    - /var/log/shared/*.log
+
+output.logstash:
+  hosts: [ "logstash-server:5044"]
