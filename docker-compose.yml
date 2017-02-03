@@ -1,0 +1,31 @@
+###############################################################
+### Default configuration for development environment.      ###
+###############################################################
+version: '2'
+services:
+  rsyslog-server:
+    restart: always
+    build: ./rsyslog
+    ports:
+      - "514:514/udp"
+      - "514:514/tcp"
+    volumes:
+      - ./rsyslog-server/conf:/etc/rsyslog.d
+  rsyslog-agent:
+    restart: always
+    build: ./rsyslog
+    links:
+      - rsyslog-server
+    depends_on:
+      - "rsyslog-server"
+    volumes:
+      - ./rsyslog-agent/conf:/etc/rsyslog.d
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - "9080:80"
+    depends_on:
+      - "rsyslog-agent"
+    volumes_from:
+      - rsyslog-agent
